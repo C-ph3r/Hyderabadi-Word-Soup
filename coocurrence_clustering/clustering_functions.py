@@ -1,7 +1,38 @@
 import re
 import nltk
+import pandas as pd
+import matplotlib as plt
+import seaborn as sns
+import numpy as np
 from unidecode import unidecode
 from nltk.tokenize.treebank import TreebankWordDetokenizer
+
+def word_freq_calculator(td_matrix, word_list, df_output=True):
+    word_counts = np.sum(td_matrix, axis=0).tolist()
+    if df_output == False:
+        word_counts_dict = dict(zip(word_list, word_counts))
+        return word_counts_dict
+    else:
+        word_counts_df = pd.DataFrame({"words":word_list, "frequency":word_counts})
+        word_counts_df = word_counts_df.sort_values(by=["frequency"], ascending=False)
+        return word_counts_df
+
+
+def plot_term_frequency(df, nr_terms, df_name, show=True):
+    
+    # Create the Seaborn bar plot
+    plt.figure(figsize=(10, 8))
+    sns_plot = sns.barplot(x='frequency', y='words', data=df.head(nr_terms))  # Plotting top 20 terms for better visualization
+    plt.title('Top 20 Term Frequencies of {}'.format(df_name))
+    plt.xlabel('Frequency')
+    plt.ylabel('Words')
+    if show==True:
+        plt.show()
+
+    fig = sns_plot.get_figure()
+    plt.close()
+
+    return fig
 
 
 def regex_cleaner(raw_text, 
