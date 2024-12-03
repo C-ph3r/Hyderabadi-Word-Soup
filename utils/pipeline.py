@@ -121,8 +121,7 @@ def main_pipeline(raw_text,
         else:
             detokenizer = TreebankWordDetokenizer()
             detokens = detokenizer.detokenize(tokenized_text)
-            return str(detokens)
-        
+            return str(detokens)      
 
 def cooccurrence_matrix_sentence_generator(preproc_sentences, sentence_cooc=False, window_size=5):
 
