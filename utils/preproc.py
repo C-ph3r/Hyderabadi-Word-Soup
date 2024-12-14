@@ -1,6 +1,27 @@
-import pandas as pd
+def multilabel_preproc(reviews, restaurants):
+    '''
+    Preprocessing for multilabel classification
+    '''
+    # Drops unnecessary columns
+    reviews.drop(['Reviewer', 'Metadata', 'Time', 'Pictures', 'Rating'], axis=1, inplace=True)
 
-def prepare_dataset_sentiment(reviews):
+    restaurants.drop(['Links', 'Cost', 'Collections', 'Timings'], axis=1, inplace=True)
+
+    # Merges the cuisines column with the reviews
+    reviews = reviews.merge(restaurants[['Name', 'Cuisines']], 
+                                        left_on='Restaurant', right_on='Name', 
+                                        how='left').drop(columns=['Name'])
+
+    # Cleanup
+    reviews.drop(['Restaurant'], axis=1, inplace=True)
+    reviews.dropna(subset=['Review'], inplace=True)
+
+    # Splits the Cuisines by commas
+    reviews['Cuisines'] = reviews['Cuisines'].apply(lambda x: [cuisine.strip() for cuisine in x.split(',')])
+
+    return reviews
+
+def sentiment_preproc(reviews):
     '''
     Prepares the raw reviews dataset for the sentiment analysis task
     Since the requirement is to use review polarity to predict Zomato score, the remaining columns are no longer needed for this task
