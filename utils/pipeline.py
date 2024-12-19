@@ -28,7 +28,7 @@ from sklearn.metrics import make_scorer, f1_score
 
 
 class MainPipeline(BaseEstimator, TransformerMixin):
-    def __init__(self, print_output=True, no_stopwords=True, custom_stopwords=[], convert_diacritics=True, 
+    def __init__(self, print_output=False, no_stopwords=True, custom_stopwords=[], convert_diacritics=True, 
                  lowercase=True, lemmatized=True, list_pos=["n","v","a","r","s"], pos_tags_list="no_pos", 
                  tokenized_output=False):
         self.print_output = print_output
@@ -212,13 +212,11 @@ def word_freq_calculator(td_matrix, word_list, df_output=True):
         return word_counts_df
 
 def fold_score_calculator(y_pred, y_test, verbose=False):
-    
-    # Compute the binary classification scores (accuracy, precision, recall, F1, AUC) for the fold.
     acc = metrics.accuracy_score(y_test, y_pred)
     prec = metrics.precision_score(y_test, y_pred, average="weighted")
     recall = metrics.recall_score(y_test, y_pred, average="weighted")
     f1 = metrics.f1_score(y_test, y_pred, average="weighted")
 
-    if verbose == True:
-        print("Accuracy: {} \nPrecision: {} \nRecall: {} \nF1: {}".format(acc,prec,recall,f1))
+    if verbose:
+        print("Accuracy: {} \nPrecision: {} \nRecall: {} \nF1: {}".format(acc, prec, recall, f1))
     return (acc, prec, recall, f1)
