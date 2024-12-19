@@ -25,6 +25,7 @@ from sklearn.multioutput import ClassifierChain
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import make_scorer, f1_score
+import emoji
 
 
 class MainPipeline(BaseEstimator, TransformerMixin):
@@ -110,6 +111,7 @@ def main_pipeline(raw_text,
                   stemmed = False, 
                   pos_tags_list = "no_pos",
                   tokenized_output = False,
+                  no_emojis = False,
                   **kwargs):
     
     """Preprocess strings according to the parameters"""
@@ -144,6 +146,9 @@ def main_pipeline(raw_text,
     
     if lowercase == True:
         tokenized_text = [item.lower() for item in tokenized_text]
+    
+    if no_emojis == True:
+        tokenized_text = [item for item in tokenized_text if not emoji.is_emoji(item)]
 
     if print_output == True:
         print(raw_text)
