@@ -31,7 +31,7 @@ import emoji
 class MainPipeline(BaseEstimator, TransformerMixin):
     def __init__(self, print_output=False, no_stopwords=True, custom_stopwords=[], convert_diacritics=True, 
                  lowercase=True, lemmatized=True, list_pos=["n","v","a","r","s"], pos_tags_list="no_pos", 
-                 tokenized_output=False):
+                 tokenized_output=False, no_emojis=False):
         self.print_output = print_output
         self.no_stopwords = no_stopwords
         self.custom_stopwords = custom_stopwords
@@ -41,6 +41,7 @@ class MainPipeline(BaseEstimator, TransformerMixin):
         self.list_pos = list_pos
         self.pos_tags_list = pos_tags_list
         self.tokenized_output = tokenized_output
+        self.no_emojis = no_emojis
 
     def fit(self, X, y=None):
         return self
@@ -49,7 +50,7 @@ class MainPipeline(BaseEstimator, TransformerMixin):
         return X.apply(lambda x: main_pipeline(x, print_output=self.print_output, no_stopwords=self.no_stopwords,
                                                custom_stopwords=self.custom_stopwords, convert_diacritics=self.convert_diacritics,
                                                lowercase=self.lowercase, lemmatized=self.lemmatized, list_pos=self.list_pos,
-                                               pos_tags_list=self.pos_tags_list, tokenized_output=self.tokenized_output))
+                                               pos_tags_list=self.pos_tags_list, tokenized_output=self.tokenized_output, no_emojis=self.no_emojis))
 
 def regex_cleaner(raw_text, 
             no_emojis = True, 
@@ -59,7 +60,7 @@ def regex_cleaner(raw_text,
             no_urls = True,
             no_punctuation = True):
     
-    #patterns
+    # Regex patterns
     newline_pattern = "(\\n)"
     hashtags_at_pattern = "([#\@@\u0040\uFF20\uFE6B])"
     hashtags_ats_and_word_pattern = "([#@]\w+)"
@@ -68,7 +69,7 @@ def regex_cleaner(raw_text,
     punctuation_pattern = "[\u0021-\u0026\u0028-\u002C\u002E-\u002F\u003A-\u003F\u005B-\u005F\u007C\u2010-\u2028\ufeff`]+"
     apostrophe_pattern = "'(?=[A-Z\s])|(?<=[a-z\.\?\!\,\s])'"
     separated_words_pattern = "(?<=\w\s)([A-Z]\s){2,}"
-    ##note that this punctuation_pattern doesn't capture ' this time to allow our tokenizer to separate "don't" into ["do", "n't"]
+    number_pattern = "\d+"
     
     if no_emojis == True:
         clean_text = re.sub(emojis_pattern,"",raw_text)
@@ -90,6 +91,8 @@ def regex_cleaner(raw_text,
     if no_punctuation == True:
         clean_text = re.sub(punctuation_pattern,"",clean_text)
         clean_text = re.sub(apostrophe_pattern,"",clean_text)
+    
+    clean_text = re.sub(number_pattern,"",clean_text)
 
     return clean_text
 
