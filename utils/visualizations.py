@@ -3,6 +3,7 @@ import seaborn as sns
 import pandas as pd
 from collections import defaultdict, Counter
 from tqdm import tqdm
+import numpy as np
 
 def plot_term_frequency(df, nr_terms, df_name, show=True):
     
