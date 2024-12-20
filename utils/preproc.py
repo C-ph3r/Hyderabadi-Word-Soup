@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 def multilabel_preproc(reviews, restaurants):
     '''
     Preprocessing for multilabel classification
